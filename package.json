@@ -1,0 +1,19 @@
+{
+  "name": "lumine",
+  "type": "module",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MPL-2.0",
+  "description": "",
+  "dependencies": {
+    "@datasert/cronjs-matcher": "^1.2.0",
+    "remark": "^14.0.2",
+    "remark-frontmatter": "^4.0.1",
+    "remark-gfm": "^3.0.1",
+    "yaml": "^2.1.1"
+  }
+}

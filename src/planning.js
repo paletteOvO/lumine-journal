@@ -44,14 +44,16 @@ export const parse_planning = (list_node) => {
       return null;
     }
     if (x.checked != null) {
-      const time = x.children[0].children[0].value.split(" ")[0];
       let start;
       let end;
-      if (time.indexOf(":") != -1) {
-        if (time.indexOf("-") != -1) {
-          [start, end] = time.split("-");
-        } else {
-          start = time;
+      const time = x.children[0].children[0].value.split(" ")[0];
+      if (x.children[0].children[0].type == "text") {
+        if (time.indexOf(":") != -1) {
+          if (time.indexOf("-") != -1) {
+            [start, end] = time.split("-");
+          } else {
+            start = time;
+          }
         }
       }
       return {
@@ -64,14 +66,17 @@ export const parse_planning = (list_node) => {
       return {
         meta,
         items: x.children[1].children.map((x) => {
-          const time = x.children[0].children[0].value.split(" ")[0];
           let start;
           let end;
-          if (time.indexOf(":") != -1) {
-            if (time.indexOf("-") != -1) {
-              [start, end] = time.split("-");
-            } else {
-              start = time;
+          // only parse time in text
+          if (x.children[0].children[0].type == "text") {
+            const time = x.children[0].children[0].value.split(" ")[0];
+            if (time.indexOf(":") != -1) {
+              if (time.indexOf("-") != -1) {
+                [start, end] = time.split("-");
+              } else {
+                start = time;
+              }
             }
           }
           return { content: x.children, start, end, done: x.checked };

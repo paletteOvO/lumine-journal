@@ -47,11 +47,10 @@ export const parse_planning = (list_node) => {
       const time = x.children[0].children[0].value.split(" ")[0];
       let start;
       let end;
-      if (time.indexOf(":") != -1 && time.indexOf("-") != -1) {
-        start = time.split("-")[0];
-        end = time.split("-")[1];
-      } else {
-        if (time.indexOf(":") != -1) {
+      if (time.indexOf(":") != -1) {
+        if (time.indexOf("-") != -1) {
+          [start, end] = time.split("-");
+        } else {
           start = time;
         }
       }
@@ -68,11 +67,10 @@ export const parse_planning = (list_node) => {
           const time = x.children[0].children[0].value.split(" ")[0];
           let start;
           let end;
-          if (time.indexOf(":") != -1 && time.indexOf("-") != -1) {
-            start = time.split("-")[0];
-            end = time.split("-")[1];
-          } else {
-            if (time.indexOf(":") != -1) {
+          if (time.indexOf(":") != -1) {
+            if (time.indexOf("-") != -1) {
+              [start, end] = time.split("-");
+            } else {
               start = time;
             }
           }
@@ -90,11 +88,13 @@ const new_list_item = (meta, items) => {
     value: v == true ? `:${k}` : `:${k} ${v}`,
   });
   const meta_items = Object.keys(meta).map((k) => new_meta_item(k, meta[k]));
+
   items.sort((a, b) => {
     const [ha, ma] = a.start.split(":");
     const [hb, mb] = b.start.split(":");
     return ha == hb ? ma - mb : ha - hb;
   });
+
   const content_items = items.map((x) => {
     return {
       type: "listItem",
@@ -103,6 +103,7 @@ const new_list_item = (meta, items) => {
       children: x.content,
     };
   });
+
   return {
     type: "listItem",
     spread: false,
@@ -119,15 +120,8 @@ const cond = {
     };
   },
   date: (meta, date) => {
-    if (meta.date === undefined) {
-      return {
-        planning: false,
-        todo: false,
-      };
-    }
-
-    const a = new Date(meta["date"]);
-    const b = new Date(format_date(date));
+    const a = new Date(meta["date"]).getTime();
+    const b = new Date(format_date(date)).getTime();
 
     if (a == b) {
       return {
@@ -147,9 +141,9 @@ const cond = {
     }
   },
   due: (meta, date) => {
-    const a = new Date(meta["due"]);
-    const b = new Date(format_date(date));
-    if (b < a) {
+    const a = new Date(meta["due"]).getTime();
+    const b = new Date(format_date(date)).getTime();
+    if (a > b) {
       return { todo: true, planning: true };
     } else if (b == a) {
       return { todo: true, planning: false };
@@ -158,10 +152,7 @@ const cond = {
     }
   },
   cron: (meta, date) => {
-    if (
-      meta["cron"] !== undefined &&
-      cronjsMatcher.isTimeMatches(meta["cron"], date.toISOString())
-    ) {
+    if (cronjsMatcher.isTimeMatches(meta["cron"], date.toISOString())) {
       return { planning: true, todo: true };
     } else {
       return { planning: true, todo: false };
@@ -170,7 +161,7 @@ const cond = {
 };
 
 export const generate_todo = (items, date) => {
-  const ret = items
+  const ret = _.chain(items)
     .map((x) => {
       if (Object.keys(x.meta).length == 0) {
         return new_list_item({ oneshot: true }, x.items);
@@ -186,12 +177,13 @@ export const generate_todo = (items, date) => {
 
       return null;
     })
-    .filter((x) => x != null && x !== undefined);
+    .filter((x) => x != null && x !== undefined)
+    .value();
   return ret;
 };
 
 export const generate_planning = (items, date) => {
-  const ret = items
+  const ret = _.chain(items)
     .map((x) => {
       if (Object.keys(x.meta).length == 0) {
         return;
@@ -212,6 +204,8 @@ export const generate_planning = (items, date) => {
         return new_list_item(x.meta, x.items);
       }
     })
-    .filter((x) => x !== null && x !== undefined);
+    .filter((x) => x !== null && x !== undefined)
+    .value();
+
   return ret;
 };

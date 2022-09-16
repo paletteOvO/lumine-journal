@@ -8,9 +8,11 @@ export const generate = (options) => {
   if (!options || !options.target_date) {
     throw new Error("Missing `options.target_date`");
   }
+
   return (tree, file) => {
     let journalMeta = {};
     let nodeMark = { "journal-agenda": undefined, "journal-todo": undefined };
+
     tree.children.forEach((node, index) => {
       switch (node.type) {
         case "yaml":
@@ -40,7 +42,7 @@ export const generate = (options) => {
     const todoPlanningItems = tree.children[nodeMark["journal-planning"] + 1];
     let todoDailyItems = tree.children[nodeMark["journal-todo"] + 1];
 
-    // init todo daily items
+    // insert todo daily items if not existed
     if (todoDailyItems.type != "list") {
       tree.children.splice(nodeMark["journal-todo"] + 1, 0, {
         type: "list",
@@ -50,11 +52,17 @@ export const generate = (options) => {
         children: [],
       });
       todoDailyItems = tree.children[nodeMark["journal-todo"] + 1];
-    } else {
-      todoDailyItems.children = [];
+    }
+
+    todoDailyItems.children = [];
+
+    if (todoPlanningItems.type != "list") {
+      // there is no planning items,
+      return;
     }
 
     const planningItems = parse_planning(todoPlanningItems);
+
     todoDailyItems.children = generate_todo(planningItems, options.target_date);
     todoPlanningItems.children = generate_planning(
       planningItems,

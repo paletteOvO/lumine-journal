@@ -1,8 +1,10 @@
 const pad_zero = (s) => s.toString().padStart(2, "0");
+
 const format_date = (d) =>
   `${pad_zero(d.getFullYear())}-${pad_zero(d.getMonth() + 1)}-${pad_zero(
     d.getDate()
   )}`;
+
 const update_date = (options) => {
   if (!options || !options.date) {
     throw new Error("Missing `options.date`");

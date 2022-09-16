@@ -1,5 +1,12 @@
 # Lumine
 
-A markdown extension for dairy, planning and todo based on remark.
+A markdown extension for dairy, planning and todo based on remark without introducing new syntax/keyword to allow most markdown preview software can handle it correctly.
 
-Look at the examples folder for more information and gen_newday.sh on how to use it.
+Transforming planning of previous day to today's todo by
+`node src/index.js -- <markdown path> <target date in YYYY-MM-DD>`
+
+Setting up a cron task to allow auto generation.
+
+Look at the examples folder for more information about format.
+
+<del>May rewrite it in rust someday</del>

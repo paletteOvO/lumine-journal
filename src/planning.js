@@ -27,7 +27,11 @@ const parse_meta = (meta_node) => {
   meta_node.children.forEach((x) => {
     if (x.value.indexOf(":") == 0) {
       const [k, v] = x.value.slice(1).split(/ (.*)/s);
-      meta[k] = v;
+      if (v === undefined) {
+        meta[k] = true;
+      } else {
+        meta[k] = v;
+      }
     }
   });
   return meta;

@@ -90,6 +90,11 @@ const new_list_item = (meta, items) => {
   const meta_items = Object.keys(meta).map((k) => new_meta_item(k, meta[k]));
 
   items.sort((a, b) => {
+    if (a.start == null || a.start == "" || a.start == undefined) {
+      return -1;
+    } else if (b.start == null || b.start == "" || b.start == undefined) {
+      return 1;
+    }
     const [ha, ma] = a.start.split(":");
     const [hb, mb] = b.start.split(":");
     return ha == hb ? ma - mb : ha - hb;

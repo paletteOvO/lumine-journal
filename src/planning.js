@@ -14,6 +14,7 @@ type Agenda = {
 };
 */
 import * as cronjsMatcher from "@datasert/cronjs-matcher";
+import _ from "lodash";
 
 const pad_zero = (s) => s.toString().padStart(2, "0");
 const format_date = (d) =>
@@ -106,36 +107,109 @@ const new_list_item = (meta, items) => {
   };
 };
 
+const cond = {
+  daily: (_meta, _date) => {
+    return {
+      planning: true,
+      todo: true,
+    };
+  },
+  date: (meta, date) => {
+    if (meta.date === undefined) {
+      return {
+        planning: false,
+        todo: false,
+      };
+    }
+
+    const a = new Date(meta["date"]);
+    const b = new Date(format_date(date));
+
+    if (a == b) {
+      return {
+        planning: false,
+        todo: true,
+      };
+    } else if (a > b) {
+      return {
+        planning: true,
+        todo: false,
+      };
+    } else {
+      return {
+        planning: false,
+        todo: false,
+      };
+    }
+  },
+  due: (meta, date) => {
+    const a = new Date(meta["due"]);
+    const b = new Date(format_date(date));
+    if (b < a) {
+      return { todo: true, planning: true };
+    } else if (b == a) {
+      return { todo: true, planning: false };
+    } else {
+      return { todo: false, planning: false };
+    }
+  },
+  cron: (meta, date) => {
+    if (
+      meta["cron"] !== undefined &&
+      cronjsMatcher.isTimeMatches(meta["cron"], date.toISOString())
+    ) {
+      return { planning: true, todo: true };
+    } else {
+      return { planning: true, todo: false };
+    }
+  },
+};
+
 export const generate_todo = (items, date) => {
-  return items
+  const ret = items
     .map((x) => {
-      if (x.meta["date"] == format_date(date)) {
-        return new_list_item(x.meta, x.items);
-      }
-      if (new Date(format_date(date)) < new Date(x.meta["due"])) {
-        return new_list_item(x.meta, x.items);
-      }
       if (Object.keys(x.meta).length == 0) {
         return new_list_item({ oneshot: true }, x.items);
       }
+
       if (
-        x.meta["cron"] !== undefined &&
-        cronjsMatcher.isTimeMatches(x.meta["cron"], date.toISOString())
+        _.some(Object.keys(x.meta), (k) => {
+          return cond[k] !== undefined && cond[k](x.meta, date).todo === true;
+        })
+      ) {
+        return new_list_item(x.meta, x.items);
+      }
+
+      return null;
+    })
+    .filter((x) => x != null && x !== undefined);
+  return ret;
+};
+
+export const generate_planning = (items, date) => {
+  const ret = items
+    .map((x) => {
+      if (Object.keys(x.meta).length == 0) {
+        return;
+      }
+      if (
+        _.chain(Object.keys(x.meta))
+          .map((k) => {
+            if (cond[k] !== undefined) {
+              const ret = cond[k](x.meta, date);
+              console.log(k, ret);
+              return ret;
+            }
+            return undefined;
+          })
+          .filter((x) => x !== undefined && x !== null)
+          .some((x) => x.planning === true)
+          .value()
       ) {
         return new_list_item(x.meta, x.items);
       }
     })
-    .filter((x) => x != null || x !== undefined);
-};
-
-export const generate_planning = (items, date) => {
-  return items
-    .map((x) => {
-      if (x.meta["date"] == format_date(date)) {
-      } else if (Object.keys(x.meta).length == 0) {
-      } else {
-        return new_list_item(x.meta, x.items);
-      }
-    })
-    .filter((x) => x != null || x !== undefined);
+    .filter((x) => x !== null && x !== undefined);
+  console.log(ret);
+  return ret;
 };

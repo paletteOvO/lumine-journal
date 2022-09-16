@@ -197,7 +197,6 @@ export const generate_planning = (items, date) => {
           .map((k) => {
             if (cond[k] !== undefined) {
               const ret = cond[k](x.meta, date);
-              console.log(k, ret);
               return ret;
             }
             return undefined;
@@ -210,6 +209,5 @@ export const generate_planning = (items, date) => {
       }
     })
     .filter((x) => x !== null && x !== undefined);
-  console.log(ret);
   return ret;
 };

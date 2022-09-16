@@ -94,25 +94,30 @@ const new_list_item = (meta, items) => {
   });
   const meta_items = Object.keys(meta).map((k) => new_meta_item(k, meta[k]));
 
-  items.sort((a, b) => {
-    if (a.start == null || a.start == "" || a.start == undefined) {
-      return -1;
-    } else if (b.start == null || b.start == "" || b.start == undefined) {
-      return 1;
-    }
+  const timed_items = items.filter(
+    (x) => x.start != null && x.start != undefined
+  );
+  const other_items = items.filter(
+    (x) => !(x.start != null && x.start != undefined)
+  );
+
+  timed_items.sort((a, b) => {
     const [ha, ma] = a.start.split(":");
     const [hb, mb] = b.start.split(":");
     return ha == hb ? ma - mb : ha - hb;
   });
 
-  const content_items = items.map((x) => {
-    return {
-      type: "listItem",
-      spread: false,
-      checked: x.done,
-      children: x.content,
-    };
-  });
+  const content_items = _.chain(other_items)
+    .concat(timed_items)
+    .map((x) => {
+      return {
+        type: "listItem",
+        spread: false,
+        checked: x.done,
+        children: x.content,
+      };
+    })
+    .value();
 
   return {
     type: "listItem",

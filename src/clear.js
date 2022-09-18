@@ -15,7 +15,11 @@ const clear_content = () => {
           if (
             journalMeta["clear-content"].indexOf(node.children[0].value) != -1
           ) {
-            nodeMark.push(index);
+            console.log(node);
+            nodeMark.push({
+              index,
+              node: node,
+            });
           }
           break;
         default:
@@ -24,15 +28,17 @@ const clear_content = () => {
     });
 
     nodeMark.reverse().forEach((eachMark) => {
-      eachMark += 1;
+      let i = eachMark.index;
+      i += 1;
       while (true) {
         if (
-          tree.children[eachMark] == undefined ||
-          tree.children[eachMark].type == "heading"
+          tree.children[i] == undefined ||
+          (tree.children[i].type == "heading" &&
+            tree.children[i].depth <= eachMark.node.depth)
         ) {
           break;
         } else {
-          tree.children.splice(eachMark, 1);
+          tree.children.splice(i, 1);
         }
       }
     });

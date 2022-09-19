@@ -15,7 +15,6 @@ const clear_content = () => {
           if (
             journalMeta["clear-content"].indexOf(node.children[0].value) != -1
           ) {
-            console.log(node);
             nodeMark.push({
               index,
               node: node,

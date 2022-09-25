@@ -22,23 +22,16 @@ module.exports = {
       "brace-style": "off",
       camelcase: "off",
       "prettier/prettier": ["warn"],
-      "sort-imports": [
-         "error",
-         {
-            ignoreCase: false,
-            ignoreDeclarationSort: false,
-            ignoreMemberSort: false,
-            memberSyntaxSortOrder: ["none", "all", "multiple", "single"],
-         },
-      ],
+      "sort-imports": "off",
       // 禁止使用 var
       "no-var": "error",
       // 禁止一次宣告多個變量
       "one-var": ["error", "never"],
       // 建議使用 const
       "prefer-const": "warn",
+      // annoying false positive
+      "no-undef": "off",
       // 需 先宣告 後使用
-      "no-undef": "error",
       "no-use-before-define": [
          "error",
          { functions: true, classes: true, variables: true },
@@ -101,8 +94,6 @@ module.exports = {
 
       "no-constant-condition": ["error", { checkLoops: false }],
 
-      // annoying false positive
-      "no-undef": "off",
       "@typescript-eslint/strict-boolean-expressions": "off",
 
       // as ASI is always present, and always cause problem if you don't understand it

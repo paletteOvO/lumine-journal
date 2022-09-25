@@ -1,9 +1,6 @@
 module.exports = {
    parser: "@typescript-eslint/parser",
    parserOptions: {
-      project: [
-         "./tsconfig.json",
-      ],
       tsconfigRootDir: __dirname,
       ecmaVersion: 6,
       sourceType: "module",
@@ -19,7 +16,9 @@ module.exports = {
    extends: ["eslint:recommended"],
    rules: {
       // 排板
+      // expected 3 spaces but eslintrc make too many false positive
       indent: "off",
+
       "brace-style": "off",
       camelcase: "off",
       "prettier/prettier": ["warn"],
@@ -109,4 +108,4 @@ module.exports = {
       // as ASI is always present, and always cause problem if you don't understand it
       semi: "off",
    },
-}
+};

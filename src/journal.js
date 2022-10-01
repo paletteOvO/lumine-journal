@@ -24,8 +24,8 @@ export const generate = (options) => {
                   !journalMeta["journal-planning"] ||
                   !journalMeta["journal-todo"]
                ) {
-                  console.log("Missing `journal-planning` or `journal-todo`");
-                  return;
+                  console.error("Missing `journal-planning` or `journal-todo`");
+                  return "";
                }
                break;
             case "heading":

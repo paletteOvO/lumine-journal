@@ -19,7 +19,6 @@ const main = async () => {
    const generator = argv[0];
    const data = await fs.readFile(argv[1], "utf-8");
    const date = new Date(argv[2]);
-
    switch (generator) {
       case "journal": {
          const file = await unified()

@@ -53,7 +53,7 @@ const generate = function () {
             ledgerItems.type != "list"
          ) {
             // there is no ledger items
-            return;
+            return "";
          }
          const ledgerParsedItems = parse_ledger(ledgerItems);
          return ledgerParsedItems

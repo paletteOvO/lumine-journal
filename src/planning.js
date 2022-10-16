@@ -153,6 +153,9 @@ const cond = {
          return { planning: true, todo: false };
       }
    },
+   todo: (_meta, _date) => {
+      return { planning: true, todo: true };
+   },
 };
 
 export const generate_todo = (items, date) => {
